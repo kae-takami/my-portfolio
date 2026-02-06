@@ -7,7 +7,7 @@ export default function Contact() {
       </p>
       <ul className="text-sm">
         <li>
-          <a className="underline" href="https://github.com/yourname" target="_blank" rel="noreferrer">
+          <a className="underline" href="https://github.com/kae-takami" target="_blank" rel="noreferrer">
             GitHub
           </a>
         </li>
