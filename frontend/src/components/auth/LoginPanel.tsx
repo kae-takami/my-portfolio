@@ -11,10 +11,28 @@ export default function LoginPanel() {
 
   const loginWithGoogle = async () => {
     setError(null);
+
     try {
+      // 1) Googleログイン
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-      router.push("/admin"); // Day2は仮（Day3で保護）
+      const result = await signInWithPopup(auth, provider);
+
+      // 2) Firebaseが発行する「本人証明（IDトークン）」を取得
+      const idToken = await result.user.getIdToken();
+
+      // 3) サーバーへ渡して、httpOnly cookie（__session）を作ってもらう
+      const res = await fetch("/api/session", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create session");
+      }
+
+      // 4) cookieができた状態で /admin へ
+      router.push("/admin");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Login failed");
     }
@@ -32,3 +50,4 @@ export default function LoginPanel() {
     </div>
   );
 }
+
